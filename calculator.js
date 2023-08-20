@@ -34,14 +34,16 @@ function operate(num1, num2, operValue) {
     }
 }
 
-const display = document.querySelector('#display');
+let display = document.querySelector('#display').textContent;
 
-function calcFill(event) {
-    const display += `${event.target.text}`;
+function calcFill() {
+        display += `${this.textContent}`;
+        console.log(display);
+        document.querySelector('#display').textContent = display;
 }
 
-const numButtons = {}
+const numButtons = {};
 for (let i = 0; i < 10; i++) {
     numButtons[i] = document.querySelectorAll('.num')[i];
-    numButtons[i].addEventListener('click', calcFill(e));
+    numButtons[i].addEventListener('click', calcFill);
 }
