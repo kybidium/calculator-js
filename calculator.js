@@ -12,6 +12,9 @@ function multiply(num1, num2) {
 }
 
 function divide(num1, num2) {
+    if (num2 == 0) {
+        return "YOU CANNOT DIVIDE BY ZERO"
+    }
     return num1 / num2;
 }
 
@@ -21,6 +24,7 @@ let number2;
 let operator;
 
 function operate(num1, num2, operValue) {
+    //design: if screen overflows, truncate/round to certain place
     if (operValue == "+") {
         return add(num1, num2);
     } else if (operValue == "-") {
