@@ -66,12 +66,13 @@ function calcFill() {
 
 // operator logic
 function operatorHelper() {
-    //need to clean this logic more
+    //need to clean this logic wayyy more
     if (operationObject.status == 'pause') {
         return;
-    } else if (operationObject.num1 != '' && operationObject.num2 != ''
-        || operationObject.num1 != '' && operationObject.num2 == '' &&
-        operationObject.status == 'number') {
+        //maybe change these num1/num2 checks so they rely entirely on status
+    } else if (operationObject.num1 != '' && 
+        operationObject.num2 != '' && operationObject.status != 'post'|| operationObject.num1 != '' && 
+        operationObject.num2 == '' && operationObject.status == 'number') {
         operationObject.num2 = 1*display.textContent;
         display.textContent = operate(operationObject.num1, operationObject.num2,
             operationObject.operValue);
@@ -128,7 +129,6 @@ function clearHelper() {
     }
 }
 
-// CLEAR SHOULDNT CLEAR EVERYTHING!!!!!! JUST THE CURRENT VALUE!!!! FIX THIS
 clear = document.querySelector('#clear');
 clear.addEventListener('click', clearHelper);
 
