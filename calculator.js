@@ -36,41 +36,68 @@ function operate(num1, num2, operValue) {
 
 // Object that stores a first number, second number, and operator
 // Maybe should have a separate one??
-const operationObject = {status: 'pre'};
+const operationObject = {num1: '', num2: '', status: 'pre'};
 
 let display = document.querySelector('#display');
 
 function calcFill() {
     if (operationObject.status == 'pre' | operationObject.status == 'post' | 
-        operationObject.status == 'operator') {
+        operationObject.status == 'operator' | operationObject.status == 'pause') {
         display.textContent = this.textContent;
         operationObject.status = 'number';
+        operatorsReset();
     } else {
         display.textContent += this.textContent;
     }
 }
 
-function setOperator() {
-    operationObject.num1 = 1*document.querySelector('#display').textContent;
-    operationObject.operValue = this.textContent;
-    operationObject.status = 'operator'; //wait till next num input
+// operator logic
+function operatorHelper() {
+    if (operationObject.status == 'pause') {
+        this.style['background-color'] = 'white';
+        this.style.color = 'white';
+        return;
+    } else if (operationObject.num1 != '' && operationObject.num2 == '') {
+        operationObject.num2 = 1*display.textContent;
+        display.textContent = operate(operationObject.num1, operationObject.num2,
+            operationObject.operValue);
+        operationObject.num1 = 1*display.textContent;
+        operationObject.num2 = '';
+        operationObject.status = 'pause';
+    } else {
+        operationObject.num1 = 1*display.textContent;
+        operationObject.operValue = this.textContent;
+        operationObject.status = 'operator'; //wait till next num input
+    }
 }
 
+function operatorsReset() {
+    operators.forEach(operator => operator.style.color = 'black');
+}
 let operators = document.querySelectorAll('.operator')
-for (let i = 0; i < operators.length; i++) {
-    operators[i].addEventListener('click', setOperator);
-}
+operators.forEach(operator => operator.addEventListener('click', operatorHelper));
 
-function operateHelper() {
+// equal button logic
+function equalsHelper() {
     operationObject.num2 = 1*display.textContent;
     display.textContent = operate(operationObject.num1, operationObject.num2,
         operationObject.operValue);
+    operationObject.status = 'post';
 }
-let equals = document.querySelector('#equals')
-equals.addEventListener('click', operateHelper)
 
+let equals = document.querySelector('#equals');
+equals.addEventListener('click', equalsHelper);
+
+// clear button logic
+function clearHelper() {
+    display.textContent = '';
+    operationObject.num1 = '';
+    operationObject.num2 = '';
+    operationObject.status = 'post';
+}
+
+clear = document.querySelector('#clear');
+clear.addEventListener('click', clearHelper);
 
 const numButtons = document.querySelectorAll('.num');
-for (let i = 0; i < 10; i++) {
-    numButtons[i].addEventListener('click', calcFill);
-}
+numButtons.forEach(button => button.addEventListener('click', calcFill));
