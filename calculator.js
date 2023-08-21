@@ -34,16 +34,43 @@ function operate(num1, num2, operValue) {
     }
 }
 
-let display = document.querySelector('#display').textContent;
+// Object that stores a first number, second number, and operator
+// Maybe should have a separate one??
+const operationObject = {status: 'pre'};
+
+let display = document.querySelector('#display');
 
 function calcFill() {
-        display += `${this.textContent}`;
-        console.log(display);
-        document.querySelector('#display').textContent = display;
+    if (operationObject.status == 'pre' | operationObject.status == 'post' | 
+        operationObject.status == 'operator') {
+        display.textContent = this.textContent;
+        operationObject.status = 'number';
+    } else {
+        display.textContent += this.textContent;
+    }
 }
 
-const numButtons = {};
+function setOperator() {
+    operationObject.num1 = 1*document.querySelector('#display').textContent;
+    operationObject.operValue = this.textContent;
+    operationObject.status = 'operator'; //wait till next num input
+}
+
+let operators = document.querySelectorAll('.operator')
+for (let i = 0; i < operators.length; i++) {
+    operators[i].addEventListener('click', setOperator);
+}
+
+function operateHelper() {
+    operationObject.num2 = 1*display.textContent;
+    display.textContent = operate(operationObject.num1, operationObject.num2,
+        operationObject.operValue);
+}
+let equals = document.querySelector('#equals')
+equals.addEventListener('click', operateHelper)
+
+
+const numButtons = document.querySelectorAll('.num');
 for (let i = 0; i < 10; i++) {
-    numButtons[i] = document.querySelectorAll('.num')[i];
     numButtons[i].addEventListener('click', calcFill);
 }
