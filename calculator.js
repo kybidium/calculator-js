@@ -1,3 +1,4 @@
+//CURRENT GOALS: resolve any comments, make calculator look better, add keyboard input
 //calculator functions
 function add(num1, num2) {
     return num1 + num2;
