@@ -53,6 +53,7 @@ function calcFill() {
 
 // operator logic
 function operatorHelper() {
+    //need to clean this logic more
     if (operationObject.status == 'pause') {
         return;
     } else if (operationObject.num1 != '' && operationObject.num2 != ''
@@ -64,7 +65,8 @@ function operatorHelper() {
         operationObject.num1 = 1*display.textContent;
         operationObject.num2 = '';
         operationObject.status = 'pause';
-    } else if (operationObject.num1 != '' && operationObject.num2 == '') {
+    } else if (operationObject.num1 != '' && operationObject.num2 == '' &&
+        operationObject.status != 'operator') {
             operationObject.status = 'pause';
     } else {
         operationObject.num1 = 1*display.textContent;
@@ -97,10 +99,17 @@ equals.addEventListener('click', equalsHelper);
 
 // clear button logic
 function clearHelper() {
-    display.textContent = '';
-    operationObject.num1 = '';
-    operationObject.num2 = '';
-    operationObject.status = 'post';
+    if (operationObject.status == 'post' || operationObject.status == 'operator' 
+        || display.textContent == '') {
+        display.textContent = '';
+        operationObject.num1 = '';
+        operationObject.num2 = '';
+        operationObject.status = 'post';
+    } else {
+        operationObject.num2 = '';
+        display.textContent = operationObject.num1;
+        operationObject.status = 'operator';
+    }
 }
 
 // CLEAR SHOULDNT CLEAR EVERYTHING!!!!!! JUST THE CURRENT VALUE!!!! FIX THIS
