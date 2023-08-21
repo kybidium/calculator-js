@@ -54,25 +54,32 @@ function calcFill() {
 // operator logic
 function operatorHelper() {
     if (operationObject.status == 'pause') {
-        this.style['background-color'] = 'white';
-        this.style.color = 'white';
         return;
-    } else if (operationObject.num1 != '' && operationObject.num2 == '') {
+    } else if (operationObject.num1 != '' && operationObject.num2 != ''
+        || operationObject.num1 != '' && operationObject.num2 == '' &&
+        operationObject.status == 'number') {
         operationObject.num2 = 1*display.textContent;
         display.textContent = operate(operationObject.num1, operationObject.num2,
             operationObject.operValue);
         operationObject.num1 = 1*display.textContent;
         operationObject.num2 = '';
         operationObject.status = 'pause';
+    } else if (operationObject.num1 != '' && operationObject.num2 == '') {
+            operationObject.status = 'pause';
     } else {
         operationObject.num1 = 1*display.textContent;
-        operationObject.operValue = this.textContent;
         operationObject.status = 'operator'; //wait till next num input
     }
+    operationObject.operValue = this.textContent;
+    this.style.color = 'white'
+    this.style['background-color'] = 'black';
 }
 
 function operatorsReset() {
-    operators.forEach(operator => operator.style.color = 'black');
+    operators.forEach(function(operator) {
+        operator.style.color = 'black';
+        operator.style['background-color'] = 'white';
+    });
 }
 let operators = document.querySelectorAll('.operator')
 operators.forEach(operator => operator.addEventListener('click', operatorHelper));
@@ -96,6 +103,7 @@ function clearHelper() {
     operationObject.status = 'post';
 }
 
+// CLEAR SHOULDNT CLEAR EVERYTHING!!!!!! JUST THE CURRENT VALUE!!!! FIX THIS
 clear = document.querySelector('#clear');
 clear.addEventListener('click', clearHelper);
 
