@@ -46,14 +46,22 @@ const operationObject = {num1: '', num2: '', status: 'pre'};
 let display = document.querySelector('#display');
 
 function calcFill() {
-    if (operationObject.status == 'pre' | operationObject.status == 'post' | 
-        operationObject.status == 'operator' | operationObject.status == 'pause') {
+    //maybe improve logic
+    if (operationObject.status == 'post') {
+        operationObject.num1 = '';
+        operationObject.num2 = '';
         display.textContent = this.textContent;
         operationObject.status = 'number';
         operatorsReset();
+    } else if (operationObject.status == 'pre' | operationObject.status == 'operator' |
+        operationObject.status == 'pause') {
     } else {
         display.textContent += this.textContent;
+        return;
     }
+    display.textContent = this.textContent;
+    operationObject.status = 'number';
+    operatorsReset();
 }
 
 // operator logic
@@ -93,6 +101,9 @@ operators.forEach(operator => operator.addEventListener('click', operatorHelper)
 
 // equal button logic
 function equalsHelper() {
+    if (operationObject.status == 'post') {
+        return;
+    }
     operationObject.num2 = 1*display.textContent;
     display.textContent = operate(operationObject.num1, operationObject.num2,
         operationObject.operValue);
