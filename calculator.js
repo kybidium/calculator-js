@@ -1,4 +1,4 @@
-//CURRENT GOALS: resolve any comments, make calculator look better, add keyboard input
+//CURRENT GOALS: resolve any comments, add keyboard input
 //calculator functions
 function add(num1, num2) {
     return num1 + num2;
@@ -30,7 +30,7 @@ function operate(num1, num2, operValue) {
         return add(num1, num2);
     } else if (operValue == "-") {
         return subtract(num1, num2);
-    } else if (operValue == "x") {
+    } else if (operValue == "x" || operValue == "*") {
         return multiply(num1, num2);
     } else if (operValue == "/") {
         return divide(num1, num2);
@@ -45,28 +45,33 @@ const operationObject = {num1: '', num2: '', status: 'pre', operValue: null};
 
 let display = document.querySelector('#display');
 
-function calcFill() {
+function calcFillHelper(numText) {
     //maybe improve logic
     if (operationObject.status == 'post') {
         operationObject.num1 = '';
         operationObject.num2 = '';
-        display.textContent = this.textContent;
+        display.textContent = numText;
         operationObject.status = 'number';
         operatorsReset();
     } else if (!(operationObject.status == 'pre' | operationObject.status == 'operator' |
         operationObject.status == 'pause')) {
-        display.textContent += this.textContent;
+        display.textContent += numText;
         return;
     }
-    display.textContent = this.textContent;
+    display.textContent = numText;
     operationObject.status = 'number';
     operatorsReset();
 }
 
+function calcFill() {
+    calcFillHelper(this.textContent)
+}
+
+
 // operator logic
-function operatorHelper() {
+function operatorHelper(operatorText) {
     //need to clean this logic wayyy more
-    if (this.id == "equals") {
+    if (operatorText == "=") {
         equalsHelper();
     } else if (operationObject.status == 'pause') {
         return;
@@ -87,11 +92,14 @@ function operatorHelper() {
         operationObject.num1 = 1*display.textContent;
         operationObject.status = 'operator'; //wait till next num input
     }
-    if (this.id != "equals") {
-        operationObject.operValue = this.textContent;
-        this.style.color = 'white'
-        this.style['background-color'] = 'orange';
+    if (operatorText != "=") {
+        operationObject.operValue = operatorText;
+        let current = document.getElementById(`${operatorText}`);
     }
+}
+
+function operateKey() {
+    operatorHelper(this.textContent);
 }
 
 function operatorsReset() {
@@ -100,8 +108,8 @@ function operatorsReset() {
         operator.style['background-color'] = 'white';
     });
 }
-let operators = document.querySelectorAll('.operator')
-operators.forEach(operator => operator.addEventListener('click', operatorHelper));
+const operators = document.querySelectorAll('.operator')
+operators.forEach(operator => operator.addEventListener('click', operateKey));
 
 // equal button logic
 function equalsHelper() {
@@ -132,12 +140,13 @@ function clearHelper() {
 clear = document.querySelector('#clear');
 clear.addEventListener('click', clearHelper);
 
+//add listeners for changing display to number buttons
 const numButtons = document.querySelectorAll('.num');
 numButtons.forEach(button => button.addEventListener('click', calcFill));
-const buttons = document.querySelectorAll('button');
 
+const buttons = document.querySelectorAll('button');
 //turn the buttons black when the mouse is held down
-buttons.forEach(button => button.addEventListener('mousedown', function(e) {
+buttons.forEach(button => button.addEventListener('mousedown', function() {
         button.style.backgroundColor = 'black';
         button.style.color = 'white';
     }
@@ -147,3 +156,45 @@ buttons.forEach(button => button.addEventListener('mouseup', function() {
     button.style.backgroundColor = 'white';
     button.style.color = 'black';
 }))
+
+const acceptedKeyObject = {};
+//maybe create another object for the acceptedKeyObject's stored values
+numButtons.forEach(button => acceptedKeyObject[button.textContent] = [button.textContent, 'number']);
+operators.forEach(button => acceptedKeyObject[button.id] = [button.id, 'operator']);
+acceptedKeyObject['c'] = ['clear']
+acceptedKeyObject['Enter'] = ['equals']
+
+document.addEventListener("keydown", (event) => {
+    let keyVal = acceptedKeyObject[event.key];
+    if (keyVal == undefined)
+        return;
+    if (keyVal[0] == 'clear') {
+        clearHelper();
+    } else if (keyVal[0] == 'equals') {
+        equalsHelper();
+    } else if (keyVal[1] == 'number') {
+        calcFillHelper(event.key);
+    } else if (keyVal[1] == 'operator') {
+        operatorHelper(event.key);
+    }
+});
+
+//turn the buttons black when the mouse is held down
+document.addEventListener('keydown', function(event) {
+    let keyVal = acceptedKeyObject[event.key];
+    if (keyVal == undefined)
+        return;
+    console.log(keyVal, keyVal[0], keyVal[1]);
+    let keyBtn = document.getElementById(keyVal[0]);
+    keyBtn.style.backgroundColor = 'black';
+    keyBtn.style.color = 'white';
+});
+//return the buttons to normal color when it is lifted
+document.addEventListener('keyup', function(event) {
+    let keyVal = acceptedKeyObject[event.key];
+    if (keyVal == undefined)
+        return;
+    let keyBtn = document.getElementById(keyVal[0]);
+    keyBtn.style.backgroundColor = 'white';
+    keyBtn.style.color = 'black';
+});
