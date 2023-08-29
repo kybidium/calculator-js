@@ -90,7 +90,7 @@ function operatorHelper() {
     if (this.id != "equals") {
         operationObject.operValue = this.textContent;
         this.style.color = 'white'
-        this.style['background-color'] = 'black';
+        this.style['background-color'] = 'orange';
     }
 }
 
@@ -136,14 +136,13 @@ const numButtons = document.querySelectorAll('.num');
 numButtons.forEach(button => button.addEventListener('click', calcFill));
 const buttons = document.querySelectorAll('button');
 
+//turn the buttons black when the mouse is held down
 buttons.forEach(button => button.addEventListener('mousedown', function(e) {
         button.style.backgroundColor = 'black';
         button.style.color = 'white';
     }
 ));
-
-
-
+//return the buttons to normal color when it is lifted
 buttons.forEach(button => button.addEventListener('mouseup', function() {
     button.style.backgroundColor = 'white';
     button.style.color = 'black';
