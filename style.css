@@ -1,4 +1,39 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #3e3e3e;
+}
+
+h1, #display {
+    color: white;
+    font-size: 48px;
+}
+
+#button-container {
+    display: flex;
+}
+
+#button-container-nums, #button-container-ops {
+    width: 150px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+#display {
+    min-height: 55px;
+    padding: 10px;
+    background-color: white;
+    margin: 20px auto;
+    min-width: 300px;
+    color: black;
+}
+
 button {
     background-color: white;
     color: black;
+    font-size: 48px;
+
 }

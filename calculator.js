@@ -35,13 +35,13 @@ function operate(num1, num2, operValue) {
     } else if (operValue == "/") {
         return divide(num1, num2);
     } else {
-        return "Invalid Operator";
+        return display.textContent;
     }
 }
 
 // Object that stores a first number, second number, and operator
 // Maybe should have a separate one??
-const operationObject = {num1: '', num2: '', status: 'pre'};
+const operationObject = {num1: '', num2: '', status: 'pre', operValue: null};
 
 let display = document.querySelector('#display');
 
@@ -53,9 +53,8 @@ function calcFill() {
         display.textContent = this.textContent;
         operationObject.status = 'number';
         operatorsReset();
-    } else if (operationObject.status == 'pre' | operationObject.status == 'operator' |
-        operationObject.status == 'pause') {
-    } else {
+    } else if (!(operationObject.status == 'pre' | operationObject.status == 'operator' |
+        operationObject.status == 'pause')) {
         display.textContent += this.textContent;
         return;
     }
@@ -67,7 +66,9 @@ function calcFill() {
 // operator logic
 function operatorHelper() {
     //need to clean this logic wayyy more
-    if (operationObject.status == 'pause') {
+    if (this.id == "equals") {
+        equalsHelper();
+    } else if (operationObject.status == 'pause') {
         return;
         //maybe change these num1/num2 checks so they rely entirely on status
     } else if (operationObject.num1 != '' && 
@@ -86,9 +87,11 @@ function operatorHelper() {
         operationObject.num1 = 1*display.textContent;
         operationObject.status = 'operator'; //wait till next num input
     }
-    operationObject.operValue = this.textContent;
-    this.style.color = 'white'
-    this.style['background-color'] = 'black';
+    if (this.id != "equals") {
+        operationObject.operValue = this.textContent;
+        this.style.color = 'white'
+        this.style['background-color'] = 'black';
+    }
 }
 
 function operatorsReset() {
@@ -111,9 +114,6 @@ function equalsHelper() {
     operationObject.status = 'post';
 }
 
-let equals = document.querySelector('#equals');
-equals.addEventListener('click', equalsHelper);
-
 // clear button logic
 function clearHelper() {
     if (operationObject.status == 'post' || operationObject.status == 'operator' 
@@ -134,3 +134,17 @@ clear.addEventListener('click', clearHelper);
 
 const numButtons = document.querySelectorAll('.num');
 numButtons.forEach(button => button.addEventListener('click', calcFill));
+const buttons = document.querySelectorAll('button');
+
+buttons.forEach(button => button.addEventListener('mousedown', function(e) {
+        button.style.backgroundColor = 'black';
+        button.style.color = 'white';
+    }
+));
+
+
+
+buttons.forEach(button => button.addEventListener('mouseup', function() {
+    button.style.backgroundColor = 'white';
+    button.style.color = 'black';
+}))
