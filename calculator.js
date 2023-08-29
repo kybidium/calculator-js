@@ -40,7 +40,8 @@ function operate(num1, num2, operValue) {
 
 // Object that stores a first number, second number, and operator
 // Maybe should have a separate one??
-const operationObject = {num1: '', num2: '', status: 'pre', operValue: null};
+const operationObject = {dispVal: '', num1: '', num2: '', status: 'pre', operValue: null,
+    pause: false};
 
 let display = document.querySelector('#display');
 
@@ -51,15 +52,15 @@ function calcFillHelper(numText) {
         operationObject.num2 = '';
         display.textContent = numText;
         operationObject.status = 'number';
-        operatorsReset();
     } else if (!(operationObject.status == 'pre' | operationObject.status == 'operator' |
-        operationObject.status == 'pause')) {
+        operationObject.pause == true)) {
         display.textContent += numText;
-        return;
+    } else {
+        display.textContent = numText;
+        operationObject.status = 'number';
     }
-    display.textContent = numText;
-    operationObject.status = 'number';
-    operatorsReset();
+    operationObject.dispVal = display.textContent;
+    operationObject.pause = false;
 }
 
 function calcFill() {
@@ -71,27 +72,27 @@ function calcFill() {
 function operatorHelper(operatorText) {
     if (operatorText == "=") {
         equalsHelper();
-    } else if (operationObject.status == 'pause') {
         return;
-    } else if (operationObject.num1 != '' && 
-        operationObject.num2 != '' && operationObject.status != 'post'|| operationObject.num1 != '' && 
-        operationObject.num2 == '' && operationObject.status == 'number') {
-        operationObject.num2 = 1*display.textContent;
+    } else {
+        operationObject.operValue = operatorText;
+    }
+    if (operationObject.pause == true) {
+        return;
+    } else if (operationObject.num1 == '' || operationObject.status == 'number'
+    && operationObject.num2 != ''|| operationObject.status == 'operator' && operationObject.num2 == ''
+    || operationObject.status == 'post') {
+        operationObject.num1 = 1*operationObject.dispVal;
+        operationObject.dispVal = '';
+        operationObject.status = 'operator';
+    } else if (operationObject.num2 != '' && operationObject.status != 'post'|| 
+        operationObject.status == 'number') {
+        operationObject.num2 = 1*operationObject.dispVal;
         display.textContent = operate(operationObject.num1, operationObject.num2,
             operationObject.operValue);
-        operationObject.num1 = 1*display.textContent;
+        operationObject.dispVal = display.textContent;
+        operationObject.num1 = 1*operationObject.dispVal;
         operationObject.num2 = '';
-        operationObject.status = 'pause';
-    } else if (operationObject.num1 != '' && operationObject.num2 == '' &&
-        operationObject.status != 'operator') {
-            operationObject.status = 'pause';
-    } else {
-        operationObject.num1 = 1*display.textContent;
-        operationObject.status = 'operator';
-    }
-    if (operatorText != "=") {
-        operationObject.operValue = operatorText;
-        let current = document.getElementById(`${operatorText}`);
+        operationObject.pause = true;
     }
 }
 
@@ -99,24 +100,21 @@ function operateKey() {
     operatorHelper(this.textContent);
 }
 
-function operatorsReset() {
-    operators.forEach(function(operator) {
-        operator.style.color = 'black';
-        operator.style['background-color'] = 'white';
-    });
-}
 const operators = document.querySelectorAll('.operator')
 operators.forEach(operator => operator.addEventListener('click', operateKey));
 
 // equal button logic
 function equalsHelper() {
-    if (operationObject.status == 'post') {
+    if (operationObject.status == 'post' || operationObject.num1 == '' ||
+    operationObject.status == 'operator' && operationObject.num2 == '' ||
+    operationObject.pause == true || operationObject.dispVal == '') {
         return;
     }
     operationObject.num2 = 1*display.textContent;
     display.textContent = operate(operationObject.num1, operationObject.num2,
         operationObject.operValue);
     operationObject.status = 'post';
+    operationObject.dispVal = display.textContent;
 }
 
 // clear button logic
@@ -124,6 +122,7 @@ function clearHelper() {
     if (operationObject.status == 'post' || operationObject.status == 'operator' 
         || display.textContent == '') {
         display.textContent = '';
+        operationObject.dispVal = '';
         operationObject.num1 = '';
         operationObject.num2 = '';
         operationObject.status = 'post';
