@@ -1,4 +1,3 @@
-//CURRENT GOALS: resolve any comments, add keyboard input
 //calculator functions
 function add(num1, num2) {
     return num1 + num2;
@@ -70,12 +69,10 @@ function calcFill() {
 
 // operator logic
 function operatorHelper(operatorText) {
-    //need to clean this logic wayyy more
     if (operatorText == "=") {
         equalsHelper();
     } else if (operationObject.status == 'pause') {
         return;
-        //maybe change these num1/num2 checks so they rely entirely on status
     } else if (operationObject.num1 != '' && 
         operationObject.num2 != '' && operationObject.status != 'post'|| operationObject.num1 != '' && 
         operationObject.num2 == '' && operationObject.status == 'number') {
@@ -90,7 +87,7 @@ function operatorHelper(operatorText) {
             operationObject.status = 'pause';
     } else {
         operationObject.num1 = 1*display.textContent;
-        operationObject.status = 'operator'; //wait till next num input
+        operationObject.status = 'operator';
     }
     if (operatorText != "=") {
         operationObject.operValue = operatorText;
